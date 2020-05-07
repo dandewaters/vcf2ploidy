@@ -1,1 +1,6 @@
 exportPattern("^[[:alpha:]]+")
+
+import(readr)
+import(tidyr)
+import(dplyr)
+import(GBS2Ploidy)

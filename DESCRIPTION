@@ -1,11 +1,13 @@
 Package: VCF2Ploidy
 Type: Package
-Title: What the Package Does (Title Case)
+Title: VCF File Converter
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Date: 2020-1-12
+Author: Daniel DeWaters
+Maintainer: dandewaters@gmail.com
+Description: Functions for converting VCF Files to HAD Format for GBS2Ploidy
+    
+License: GPL (>= 2)
+URL: https://github.com/dandewaters/VCF2Ploidy
 Encoding: UTF-8
 LazyData: true
