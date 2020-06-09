@@ -9,22 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# VCF2Ploidy
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Introduction
+This R package acts as a companion package to the [gbs2ploidy package](https://cran.r-project.org/web/packages/gbs2ploidy/index.html). The functions in the GBS2Ploidy package require the input data to be in Heterozygous Allele Depth (HAD) format, but does not include a function for converting from Variant-Calling Format (VCF). The VCF2HAD() function in this package reads in VCF files and returns a data frame in HAD format hat can be input to the GBS2Ploidy functions. Alternatively, you can use the VCF2Ploidy() function in this package to achieve this in one step.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Installation
