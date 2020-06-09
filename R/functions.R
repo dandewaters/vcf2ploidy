@@ -74,18 +74,17 @@ analyze_locus <- function(locus, remove_double_hets){
   # If locus is heterozygous, extract the number of reads from
   if(startsWith(locus, "0/1") | startsWith(locus, "1/0")){
     # Isolate number of reads from locus data string
-    locus <- strsplit(locus, ":")[[1]][2]
+    locus <- strsplit(locus, ":")[[1]][3]
     locus <- strsplit(locus, ",")[[1]]
     # Cast to numeric vector and sort the numbers of reads
     locus <- as.numeric(locus)
-    locus[ordered(locus)]
+    locus <- locus[ordered(locus)]
 
     # Checks for double heterozygotes by looking for more than 2 nonzero reads
-    if((locus[3] != 0 | locus[4] != 0) & remove_double_hets == TRUE){return(c(NA, NA))}
+    if(remove_double_hets == TRUE & (locus[3] != 0 | locus[4] != 0)){return(c(NA, NA))}
     # Return NA if there are no reads for any allele or there are only reads for one allele
     # (iPyrad falsely labeling a homozygote or missing locus as a heterozygote)
-    else if(locus[1] == 0 & locus[2] == 0){return(c(NA, NA))}
-    else if(locus[1] != 0 & locus[2] == 0){return(c(NA, NA))}
+    else if(locus[2] == 0){return(c(NA, NA))}
     # Return the 2 highest number of reads otherwise
     else{return(locus[1:2])}
   }
@@ -115,7 +114,7 @@ analyze_locus <- function(locus, remove_double_hets){
 #' @importFrom
 #'
 #' @export
-VCF2HAD <- function(filename, skip_lines, remove_double_hets){
+VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 
   # Read in VCF file
   VCF_df <- read_VCF(filename, skip_lines)
@@ -128,7 +127,7 @@ VCF2HAD <- function(filename, skip_lines, remove_double_hets){
   for(i in 1:num_columns){
 
     # Grab column from VCF data frame
-    col = VCF_df[i]
+    col = VCF_df[[i]]
 
     # Initialize an empty data frame
     new_col <- data.frame()
@@ -150,7 +149,14 @@ VCF2HAD <- function(filename, skip_lines, remove_double_hets){
     colnames(new_col) <- c(colnames(col), colnames(col))
 
     # Add new columns to final data frame
-    HAD_df <- cbind(HAD_df, new_col)
+    if(dim(HAD_df)[1] == 0 & dim(HAD_df)[2] == 0){
+      HAD_df = new_col
+    }
+    else{
+      HAD_df <- cbind(HAD_df, new_col)
+    }
   }
+  return(HAD_df)
 }
 
+df <- VCF2HAD(filename="./inst/extdata/Test2.vcf")
