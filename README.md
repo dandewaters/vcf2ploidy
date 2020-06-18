@@ -1,14 +1,3 @@
----
-title: "README"
-author: "Daniel DeWaters"
-date: "5/7/2020"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # VCF2Ploidy
 
 ## Introduction
@@ -19,7 +8,7 @@ This package is an update to my original [VCF File Converter tool](https://githu
  
 To install, make sure you have the [devtools package](https://cran.r-project.org/package=devtools) installed and loaded. Then run the following commands:
 
-```{r installation}
+```{r installation, eval=FALSE}
 library(devtools)
 install_github("dandewaters/VCF2Ploidy")
 library(FARSFunctions)
@@ -29,7 +18,7 @@ library(FARSFunctions)
 
 Read the intro vignette by running install_github with vignettes = TRUE and running the following commands:
 
-```{r vignettes}
+```{r vignettes, eval=FALSE}
 library(devtools)
 install_github("dandewaters/VCF2Ploidy", build_vignette=TRUE)
 vignette("Introduction", package="VCF2Ploidy")
