@@ -17,11 +17,22 @@ This package is an update to my original [VCF File Converter tool](https://githu
 
 ## Installation
  
-To install, make sure you have the [devtools package](https://cran.r-project.org/package=devtools) installed and loaded. Then run the following command:
+To install, make sure you have the [devtools package](https://cran.r-project.org/package=devtools) installed and loaded. Then run the following commands:
 
 ```{r installation}
+library(devtools)
 install_github("dandewaters/VCF2Ploidy")
 library(FARSFunctions)
+```
+
+## Vignettes
+
+Read the intro vignette by running install_github with vignettes = TRUE and running the following commands:
+
+```{r vignettes}
+library(devtools)
+install_github("dandewaters/VCF2Ploidy", build_vignette=TRUE)
+vignette("Introduction", package="VCF2Ploidy")
 ```
 
 ## Travis Badge
