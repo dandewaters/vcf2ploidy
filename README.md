@@ -24,7 +24,6 @@ install_github("dandewaters/VCF2Ploidy", build_vignette=TRUE)
 vignette("Introduction", package="VCF2Ploidy")
 ```
 
-## Travis Badge
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/dandewaters/VCF2Ploidy.svg?branch=master)](https://travis-ci.com/dandewaters/VCF2Ploidy)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/dandewaters/VCF2Ploidy?branch=master&svg=true)](https://ci.appveyor.com/project/dandewaters/VCF2Ploidy)
