@@ -64,13 +64,13 @@ test_that("VCF conversion is correct", {
   expect_that(df[1, 1:2], is_equivalent_to(c(30, 10)))
 })
 
-context("Ploidy estimation is correct")
+#context("Ploidy estimation is correct")
 
-test_that("Ploidy estimation is correct", {
-  filename <- system.file("extdata", "example1.vcf", package = "VCF2Ploidy", mustWork=TRUE)
-  df <- VCF2Ploidy(filename=filename,
-                   remove_double_hets=TRUE, props=c(0.25, 0.5, 0.75))
+#test_that("Ploidy estimation is correct", {
+#  filename <- system.file("extdata", "example1.vcf", package = "VCF2Ploidy", mustWork=TRUE)
+#  df <- VCF2Ploidy(filename=filename,
+#                   remove_double_hets=TRUE, props=c(0.25, 0.5, 0.75))
 
-  expect_that(df, is_a("list"))
-  expect_that(names(df), is_equivalent_to(c("pp", "pcwghts", "pcscrs")))
-})
+#  expect_that(df, is_a("list"))
+#  expect_that(names(df), is_equivalent_to(c("pp", "pcwghts", "pcscrs")))
+#})
