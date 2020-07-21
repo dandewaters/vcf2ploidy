@@ -107,8 +107,8 @@ analyze_locus_colony <- function(locus){
 #' @return A data frame in Heterozygous Allele Depth (HAD) format
 #'
 #' @examples
-#' \dontrun{VCF2HAD(./inst/extdata/example.vcf)}
-#' \dontrun{VCF2HAD(./inst/extdata/example.vcf, remove_dobule_hets=TRUE)}
+#' \dontrun{VCF2HAD("./inst/extdata/example.vcf")}
+#' \dontrun{VCF2HAD("./inst/extdata/example.vcf", remove_dobule_hets=TRUE)}
 #'
 #' @export
 VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
@@ -160,7 +160,7 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 #' @return NULL
 #'
 #' @examples
-#' \dontrun{VCF2HAD(./inst/extdata/example.vcf)}
+#' \dontrun{VCF2colony(filename = "./inst/extdata/example.vcf", out_filename = "./example.txt")}
 #'
 #' @export
 VCF2colony <- function(filename, skip_lines=10, out_filename){

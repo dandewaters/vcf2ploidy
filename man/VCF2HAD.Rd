@@ -20,7 +20,7 @@ A data frame in Heterozygous Allele Depth (HAD) format
 Convert tbl_df output from read_VCF() to a Heterozygous Allele Depth (HAD) format, to be read in by GBS2Ploidy.
 }
 \examples{
-\dontrun{VCF2HAD(./inst/extdata/example.vcf)}
-\dontrun{VCF2HAD(./inst/extdata/example.vcf, remove_dobule_hets=TRUE)}
+\dontrun{VCF2HAD("./inst/extdata/example.vcf")}
+\dontrun{VCF2HAD("./inst/extdata/example.vcf", remove_dobule_hets=TRUE)}
 
 }

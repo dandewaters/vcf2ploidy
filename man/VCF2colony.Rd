@@ -4,7 +4,7 @@
 \alias{VCF2colony}
 \title{Convert Raw VCF Data to Colony Format}
 \usage{
-VCF2colony(filename, skip_lines = 10)
+VCF2colony(filename, skip_lines = 10, out_filename)
 }
 \arguments{
 \item{filename}{A character string of the data file path.}
@@ -17,6 +17,6 @@ VCF2colony(filename, skip_lines = 10)
 Convert tbl_df output from read_VCF() to a format that can be read in by Colony.
 }
 \examples{
-\dontrun{VCF2HAD(./inst/extdata/example.vcf)}
+\dontrun{VCF2colony(filename = "./inst/extdata/example.vcf", out_filename = "./example.txt")}
 
 }
