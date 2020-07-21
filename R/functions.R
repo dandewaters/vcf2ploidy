@@ -163,7 +163,7 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 #' \dontrun{VCF2HAD(./inst/extdata/example.vcf)}
 #'
 #' @export
-VCF2colony <- function(filename, skip_lines=10){
+VCF2colony <- function(filename, skip_lines=10, out_filename){
   # Read in VCF file
   VCF_df <- read_VCF(filename, skip_lines)
   # Initialize an empty data frame
