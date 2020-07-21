@@ -38,9 +38,9 @@ read_VCF <- function(filename, skip_lines=10){
 
 
 
-#' @title Extract Locus Information from VCF Data
+#' @title Extract Locus Information from VCF Data for HAD Format
 #'
-#' @description A function used to fill the converted data frame with the number of reads on each allele for heterozygous loci. Not exported.
+#' @description A function used to fill the HAD converted data frame with the number of reads on each allele for heterozygous loci. Not exported.
 #'
 #' @param locus A character string of the locus information from a column of the VCF data frame.
 #' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information.
@@ -69,6 +69,29 @@ analyze_locus <- function(locus, remove_double_hets=FALSE){
   }
   # Return NA if locus is not heterozygous
   else{return(c(NA, NA))}
+}
+
+
+#' @title Extract Locus Information from VCF Data for Colony Format
+#'
+#' @description A function used to fill the Colony converted data frame. Not exported.
+#'
+#' @param locus A character string of the locus information from a column of the VCF data frame.
+#'
+#' @return A numeric vector of the number of reads for each allele at heterozygous loci.
+#'
+#' @examples
+#' \dontrun{analyze_locus("1/0:8:0,6,0,2")}
+analyze_locus_colony <- function(locus){
+  # Return -9, -9 for missing locus
+  if(startsWith(locus, "./.")){return(c(-9, -9))}
+
+  else{
+    locus <- strsplit(locus, ":")[[1]][1]
+    locus <- strsplit(locus, "/")[[1]]
+    locus <- as.numeric(locus)
+    return(locus+1)
+  }
 }
 
 
@@ -105,14 +128,65 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
     # Initialize an empty data frame
     new_col <- data.frame()
 
+    # Loop through column and extract heterozygote information
+    for(j in 1:num_rows){
+      # Grab locus information from column
+      locus <- col[j]
+      # Analyze locus information and get numbers of reads for each allele to add to column
+      locus <- analyze_locus(locus, remove_double_hets)
+      # Add locus data to new column
+      new_col <- rbind(new_col, locus)
+    }
+
+    # Get correct column names for new columns
+    colnames(new_col) <- c(col_name, col_name)
+    # Add new columns to final data frame
+    if(dim(HAD_df)[1] == 0 & dim(HAD_df)[2] == 0){HAD_df = new_col}
+    else{HAD_df <- cbind(HAD_df, new_col)}
+  }
+  return(HAD_df)
+}
+
+
+
+#' @title Convert Raw VCF Data to Colony Format
+#'
+#' @description Convert tbl_df output from read_VCF() to a format that can be read in by Colony.
+#'
+#' @param filename A character string of the data file path.
+#' @param skip_lines Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.
+#' @param out_filename A character string of the resulting converted file path.
+#'
+#' @return NULL
+#'
+#' @examples
+#' \dontrun{VCF2HAD(./inst/extdata/example.vcf)}
+#'
+#' @export
+VCF2colony <- function(filename, skip_lines=10){
+  # Read in VCF file
+  VCF_df <- read_VCF(filename, skip_lines)
+  # Initialize an empty data frame
+  colony_df <- data.frame()
+
+  # Get the number of rows and columns
+  num_rows    <- dim(VCF_df)[1]
+  num_columns <- dim(VCF_df)[2]
+
+  for(i in 1:num_columns){
+    # Grab column from VCF data frame
+    col <- VCF_df[[i]]
+    col_name <- colnames(VCF_df)[i]
+
+    # Initialize an empty data frame
+    new_col <- data.frame()
 
     # Loop through column and extract heterozygote information
     for(j in 1:num_rows){
       # Grab locus information from column
       locus <- col[j]
-
       # Analyze locus information and get numbers of reads for each allele to add to column
-      locus <- analyze_locus(locus, remove_double_hets)
+      locus <- analyze_locus_colony(locus)
 
       # Add locus data to new column
       new_col <- rbind(new_col, locus)
@@ -120,16 +194,14 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 
     # Get correct column names for new columns
     colnames(new_col) <- c(col_name, col_name)
-
-    # Add new columns to final data frame
-    if(dim(HAD_df)[1] == 0 & dim(HAD_df)[2] == 0){
-      HAD_df = new_col
-    }
-    else{
-      HAD_df <- cbind(HAD_df, new_col)
-    }
+    # Add new columns to final data frame if data frame isn't empty and -
+    if(dim(colony_df)[1] == 0 & dim(colony_df)[2] == 0){colony_df = new_col &
+    # - if all loci aren't missing
+      all(new_col[1] == 9) & all(new_col[2] == 9)}
+    else{colony_df <- cbind(colony_df, new_col)}
   }
-  return(HAD_df)
+  # Write the converted data to a text file
+  write.table(colony_df, file=out_filename, quote=FALSE, sep="\t", col.names=TRUE)
 }
 
 
@@ -190,7 +262,6 @@ VCF2Ploidy <- function(filename, skip_lines=10, remove_double_hets=FALSE,
   prop <- estprops(cov1=cov1, cov2=cov2, props=props,
            mcmc.nchain=mcmc.nchain, mcmc.steps=mcmc.steps,
            mcmc.burnin=mcmc.burnin, mcmc.thin=mcmc.thin)
-
 
   # Calculate observed heterozygosity and depth of coverage from the allele count
   H <- apply(is.na(cov1)==FALSE, 2, mean)

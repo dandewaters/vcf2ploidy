@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{analyze_locus}
 \alias{analyze_locus}
-\title{Extract Locus Information from VCF Data}
+\title{Extract Locus Information from VCF Data for HAD Format}
 \usage{
 analyze_locus(locus, remove_double_hets = FALSE)
 }
@@ -15,7 +15,7 @@ analyze_locus(locus, remove_double_hets = FALSE)
 A numeric vector of the number of reads for each allele at heterozygous loci.
 }
 \description{
-A function used to fill the converted data frame with the number of reads on each allele for heterozygous loci. Not exported.
+A function used to fill the HAD converted data frame with the number of reads on each allele for heterozygous loci. Not exported.
 }
 \examples{
 \dontrun{analyze_locus("1/0:8:0,6,0,2", remove_double_hets=TRUE)}
