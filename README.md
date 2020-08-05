@@ -25,3 +25,7 @@ library(devtools)
 install_github("dandewaters/VCF2Ploidy", build_vignette=TRUE)
 vignette("Introduction", package="VCF2Ploidy")
 ```
+
+## References
+
+Gompert  Z.  and  Mock  K.  (XXXX)  Detection  of  individual  ploidy  levels  with  genotyping-by-sequencing (GBS) analysis. Molecular Ecology Resources, submitted.
