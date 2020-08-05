@@ -1,3 +1,41 @@
+#' @title Count number of metadata lines in VCF files
+#'
+#' @description Read in a Variant Calling Format file and count the number of metadata lines to skip over for read_VCF function. Not exported.
+#'
+#' @details Throws an error if file cannot be found. Metadata lines are identified by checking if the lines starts with "##". This function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time in the read_VCF, VCF2HAD, VCF2Ploidy, and VCF2Colony functions by entering the number of metadata lines in their "skip_lines" argument.
+#'
+#' @param filename A character string of the data file path.
+#'
+#' @return Returns a numeric of the number of metadata lines in VCF file.
+#'
+#' @examples
+#' \dontrun{count_metadata_lines("./inst/extdata/example.vcf")}
+count_metadata_lines <- function(filename){
+  if(!file.exists(filename))
+    stop("file '", filename, "' does not exist")
+
+  # Read in VCF File line by line
+  VCF_file <- readLines(filename)
+
+  # Initialize parameters to loop through lines of VCF file, keep counting until there are no more metadata lines
+  line <- 1
+  num_metadata_lines <- 0
+  is_metadata_line <- TRUE
+
+  # Loop through lines of VCF file,
+  while(is_metadata_line == TRUE){
+    if(startsWith(VCF_file[line], "##")){
+      line <- line + 1
+      num_metadata_lines <- num_metadata_lines + 1
+    }
+    else{
+      is_metadata_line <- FALSE
+    }
+  }
+
+  return(num_metadata_lines)
+}
+
 #' @title Read in VCF files
 #'
 #' @description Read in a Variant Calling Format file.
@@ -5,13 +43,14 @@
 #' @details Throws an error if file cannot be found.
 #'
 #' @param filename A character string of the data file path.
-#' @param skip_lines Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.
+#' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
 #'
 #' @return This function returns a data frame table of the VCF data with the metadata and the first 9 columns removed.
 #'
 #' @examples
 #' \dontrun{read_VCF("./inst/extdata/example.vcf")}
 #'
+#' @importFrom readr cols
 #' @importFrom readr read_delim
 #' @importFrom dplyr tbl_df
 #' @importFrom dplyr rename
@@ -19,9 +58,14 @@
 #' @importFrom magrittr "%>%"
 #'
 #' @export
-read_VCF <- function(filename, skip_lines=10){
+read_VCF <- function(filename, skip_lines=NULL){
   if(!file.exists(filename))
     stop("file '", filename, "' does not exist")
+
+  if(is.null(skip_lines)){
+    # Count the number of metadata lines to skip over in VCF file
+    skip_lines <- count_metadata_lines(filename)
+  }
 
   # Read in VCF file
   VCF_file <- read_delim(file=filename, delim="\t", col_types = cols(.default = "c"), skip=skip_lines)
@@ -101,7 +145,7 @@ analyze_locus_colony <- function(locus){
 #' @description Convert tbl_df output from read_VCF() to a Heterozygous Allele Depth (HAD) format, to be read in by GBS2Ploidy.
 #'
 #' @param filename A character string of the data file path.
-#' @param skip_lines Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.
+#' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
 #' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with GBS2Ploidy falsely labeling triploids.
 #'
 #' @return A data frame in Heterozygous Allele Depth (HAD) format
@@ -111,7 +155,7 @@ analyze_locus_colony <- function(locus){
 #' \dontrun{VCF2HAD("./inst/extdata/example.vcf", remove_dobule_hets=TRUE)}
 #'
 #' @export
-VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
+VCF2HAD <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
   # Read in VCF file
   VCF_df <- read_VCF(filename, skip_lines)
   # Initialize an empty data frame
@@ -154,7 +198,7 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 #' @description Convert tbl_df output from read_VCF() to a format that can be read in by Colony.
 #'
 #' @param filename A character string of the data file path.
-#' @param skip_lines Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.
+#' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
 #' @param out_filename A character string of the resulting converted file path.
 #'
 #' @return NULL
@@ -163,7 +207,7 @@ VCF2HAD <- function(filename, skip_lines=10, remove_double_hets=FALSE){
 #' \dontrun{VCF2colony(filename = "./inst/extdata/example.vcf", out_filename = "./example.txt")}
 #'
 #' @export
-VCF2colony <- function(filename, skip_lines=10, out_filename){
+VCF2colony <- function(filename, skip_lines=NULL, out_filename){
   # Read in VCF file
   VCF_df <- read_VCF(filename, skip_lines)
   # Initialize an empty data frame
@@ -211,7 +255,7 @@ VCF2colony <- function(filename, skip_lines=10, out_filename){
 #' @description Read in a VCf file, convert to HAD format, and estimate ploidy in one function
 #'
 #' @param filename A character string of the data file path.
-#' @param skip_lines Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.
+#' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
 #' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with GBS2Ploidy falsely labeling triploids.
 #' @param props a vector containing valid allelic proportions given the expected cyotypes present in the sample.
 #' @param mcmc.nchain number of chains for MCMC.
@@ -237,13 +281,13 @@ VCF2colony <- function(filename, skip_lines=10, out_filename){
 #' @importFrom gbs2ploidy estploidy
 #'
 #' @export
-VCF2Ploidy <- function(filename, skip_lines=10, remove_double_hets=FALSE,
+VCF2Ploidy <- function(filename, skip_lines=NULL, remove_double_hets=FALSE,
                        props=c(0.25, 0.33, 0.5, 0.66, 0.75), mcmc.nchain=2,
                        mcmc.steps=10000, mcmc.burnin=1000, mcmc.thin=2,
                        train=FALSE, pl=NA, set=NA, nclasses=2, pcs=1:2){
 
   # Open file and convert to HAD format
-  had_df <- VCF2HAD(filename, skip_lines=10, remove_double_hets=FALSE)
+  had_df <- VCF2HAD(filename, remove_double_hets=FALSE)
 
   # Separate the first and second alleles in the HAD data frame
   num_cols <- dim(had_df)[2]

@@ -4,12 +4,12 @@
 \alias{read_VCF}
 \title{Read in VCF files}
 \usage{
-read_VCF(filename, skip_lines = 10)
+read_VCF(filename, skip_lines = NULL)
 }
 \arguments{
 \item{filename}{A character string of the data file path.}
 
-\item{skip_lines}{Number of metadata lines to skip before reading in the VCF file. Metadata lines typically start with "##". Default is 10.}
+\item{skip_lines}{A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.}
 }
 \value{
 This function returns a data frame table of the VCF data with the metadata and the first 9 columns removed.
