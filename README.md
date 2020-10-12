@@ -13,7 +13,6 @@ To install, make sure you have the [devtools package](https://cran.r-project.org
 ```{r installation, eval=FALSE}
 library(devtools)
 install_github("dandewaters/VCF2Ploidy")
-library(FARSFunctions)
 ```
 
 ## Vignettes
