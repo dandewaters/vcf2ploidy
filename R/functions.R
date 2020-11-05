@@ -96,8 +96,14 @@ read_VCF <- function(filename, skip_lines=NULL){
 analyze_locus <- function(locus, remove_double_hets=FALSE){
   # If locus is heterozygous, extract the number of reads from
   if(startsWith(locus, "0/1") | startsWith(locus, "1/0")){
-    # Isolate number of reads from locus data string
-    locus <- strsplit(locus, ":")[[1]][3]
+    ## Isolate number of reads from locus data string
+    # Split string by semicolon character
+    locus <- strsplit(locus, ":")[[1]]
+    # Get the index of the last element in the split locus vector,
+    # which holds the number of nucleotide reads
+    locus_length <- length(locus)
+    locus <- locus[locus_length]
+    # split up read numbers
     locus <- strsplit(locus, ",")[[1]]
     # Cast to numeric vector and sort the numbers of reads
     locus <- as.numeric(locus)
