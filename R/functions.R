@@ -62,7 +62,7 @@ read_VCF <- function(filename, skip_lines=NULL){
   if(!file.exists(filename))
     stop("file '", filename, "' does not exist")
 
-  if(is.null(skip_lines)){
+  if(is.null(skip_lines) || is.na(skip_lines)){
     # Count the number of metadata lines to skip over in VCF file
     skip_lines <- count_metadata_lines(filename)
   }
@@ -244,14 +244,18 @@ VCF2colony <- function(filename, skip_lines=NULL, out_filename){
 
     # Get correct column names for new columns
     colnames(new_col) <- c(col_name, col_name)
-    # Add new columns to final data frame if data frame isn't empty and -
-    if(dim(colony_df)[1] == 0 & dim(colony_df)[2] == 0){colony_df = new_col &
-    # - if all loci aren't missing
-      all(new_col[1] == 9) & all(new_col[2] == 9)}
-    else{colony_df <- cbind(colony_df, new_col)}
+
+
+    # Add new columns if all loci aren't missing
+    if(!all(new_col[1] == -9) & !all(new_col[2] == -9)){
+      # Add new columns to final data frame if data frame isn't empty
+      if(dim(colony_df)[1] == 0 & dim(colony_df)[2] == 0){colony_df = new_col}
+      else{colony_df <- cbind(colony_df, new_col)}
+    }
   }
+
   # Write the converted data to a text file
-  write.table(colony_df, file=out_filename, quote=FALSE, sep="\t", col.names=TRUE)
+  write.table(colony_df, file=out_filename, quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
 }
 
 
