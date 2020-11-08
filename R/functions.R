@@ -24,13 +24,13 @@ count_metadata_lines <- function(filename){
 
   # Loop through lines of VCF file,
   while(is_metadata_line == TRUE){
+    # Count metadata lines
     if(startsWith(VCF_file[line], "##")){
       line <- line + 1
       num_metadata_lines <- num_metadata_lines + 1
     }
-    else{
-      is_metadata_line <- FALSE
-    }
+    # Break loop if line isn't a metadata line
+    else{is_metadata_line <- FALSE}
   }
 
   return(num_metadata_lines)
@@ -77,7 +77,7 @@ read_VCF <- function(filename, skip_lines=NULL){
     rename("CHROM" = "#CHROM") %>%
     dplyr::select(-CHROM, -POS, -ID, -REF, -ALT, -QUAL, -FILTER, -INFO, -FORMAT)
 
-  VCF_file
+  return(VCF_file)
 }
 
 
@@ -105,15 +105,25 @@ analyze_locus <- function(locus, remove_double_hets=FALSE){
     locus <- locus[locus_length]
     # split up read numbers
     locus <- strsplit(locus, ",")[[1]]
-    # Cast to numeric vector and sort the numbers of reads
+    # Cast to numeric vector
     locus <- as.numeric(locus)
+    # Keep only nonzero numbers of reads and sort remaining reads
+    locus <- locus[locus != 0]
     locus <- locus[ordered(-locus)]
 
-    # Checks for double heterozygotes by looking for more than 2 nonzero reads
-    if(remove_double_hets == TRUE & (locus[3] != 0 | locus[4] != 0)){return(c(NA, NA))}
+
     # Return NA if there are no reads for any allele or there are only reads for one allele
     # (iPyrad falsely labeling a homozygote or missing locus as a heterozygote)
-    else if(locus[2] == 0){return(c(NA, NA))}
+    if(length(locus) < 2){return(c(NA, NA))}
+
+    # Return number of reads if there were exactly 2
+    else if(length(locus) == 2){return(locus)}
+
+
+    # Checks for double heterozygotes by looking for more than 2 nonzero reads
+    else if((length(locus) > 2) & (remove_double_hets == TRUE))
+       {return(c(NA, NA))}
+
     # Return the 2 highest number of reads otherwise
     else{return(locus[1:2])}
   }
@@ -136,6 +146,7 @@ analyze_locus_colony <- function(locus){
   # Return -9, -9 for missing locus
   if(startsWith(locus, "./.")){return(c(-9, -9))}
 
+  # Get heterozygosity numbers, add 1 to each
   else{
     locus <- strsplit(locus, ":")[[1]][1]
     locus <- strsplit(locus, "/")[[1]]
@@ -194,6 +205,7 @@ VCF2HAD <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
     if(dim(HAD_df)[1] == 0 & dim(HAD_df)[2] == 0){HAD_df = new_col}
     else{HAD_df <- cbind(HAD_df, new_col)}
   }
+
   return(HAD_df)
 }
 
@@ -255,7 +267,9 @@ VCF2colony <- function(filename, skip_lines=NULL, out_filename){
   }
 
   # Write the converted data to a text file
-  write.table(colony_df, file=out_filename, quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
+  write.table(colony_df, file=out_filename,
+              quote=FALSE, sep="\t",
+              row.names=FALSE, col.names=TRUE)
 }
 
 
