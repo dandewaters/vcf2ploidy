@@ -13,10 +13,10 @@ count_metadata_lines(filename)
 Returns a numeric of the number of metadata lines in VCF file.
 }
 \description{
-Read in a Variant Calling Format file and count the number of metadata lines to skip over for read_VCF function. Not exported.
+Read in a Variant Calling Format file and count the number of metadata lines to skip over for read_vcf function. Not exported.
 }
 \details{
-Throws an error if file cannot be found. Metadata lines are identified by checking if the lines starts with "##". This function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time in the read_VCF, VCF2HAD, VCF2Ploidy, and VCF2Colony functions by entering the number of metadata lines in their "skip_lines" argument.
+Throws an error if file cannot be found. Metadata lines are identified by checking if the lines starts with "##". This function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time in the read_vcf, vcf2had, vcf2ploidy, and vcf2colony functions by entering the number of metadata lines in their "skip_lines" argument.
 }
 \examples{
 \dontrun{count_metadata_lines("./inst/extdata/example.vcf")}

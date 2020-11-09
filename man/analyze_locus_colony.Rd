@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{analyze_locus_colony}
 \alias{analyze_locus_colony}
-\title{Extract Locus Information from VCF Data for Colony Format}
+\title{Extract Locus Information from VCF Data for COLONY Format}
 \usage{
 analyze_locus_colony(locus)
 }

@@ -80,16 +80,16 @@ make_specimen_names <- function(n){
 #' @param num_loci the number of loci (rows) to generate in the file
 #' @param num_specimens the number of specimen (columns) to generate in the file
 #' @examples
-#' \dontrun{make_example_VCF_file()}
-#' \dontrun{make_example_VCF_file(save_path="./my_example.vcf")}
-#' \dontrun{make_example_VCF_file(min_reads=24, max_reads=100)}
-#' \dontrun{make_example_VCF_file(num_loci=100, num_specimens=4)}
+#' \dontrun{make_example_vcf_file()}
+#' \dontrun{make_example_vcf_file(save_path="./my_example.vcf")}
+#' \dontrun{make_example_vcf_file(min_reads=24, max_reads=100)}
+#' \dontrun{make_example_vcf_file(num_loci=100, num_specimens=4)}
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
 #' @importFrom magrittr "%>%"
 #' @importFrom utils write.table
 #' @export
-make_example_VCF_file <- function(save_path="./generated_example.vcf",
+make_example_vcf_file <- function(save_path="./generated_example.vcf",
                               min_reads=8, max_reads=200, num_loci=10, num_specimens=5){
 
   # Make initial column to make adding the other columns to data frame easier

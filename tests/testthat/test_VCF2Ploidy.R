@@ -7,7 +7,7 @@ test_that("Throws errors", {
 context("Reading files are correct")
 
 test_that("Reads files correctly", {
-  filename <- system.file("extdata", "example1.vcf", package = "VCF2Ploidy", mustWork=TRUE)
+  filename <- system.file("extdata", "example1.vcf", package = "vcf2ploidy", mustWork=TRUE)
   df <- read_VCF(filename)
   expect_that(df, is_a("data.frame"))
   expect_equal(length(df), 5)
@@ -50,7 +50,7 @@ test_that("Locus Analysis is correct", {
 
 test_that("VCF conversion is correct", {
   # Run conversion
-  filename <- system.file("extdata", "example1.vcf", package = "VCF2Ploidy", mustWork=TRUE)
+  filename <- system.file("extdata", "example1.vcf", package = "vcf2ploidy", mustWork=TRUE)
   df <- VCF2HAD(filename=filename, remove_double_hets=FALSE)
 
   # Check dimensions converted example data
@@ -67,8 +67,8 @@ test_that("VCF conversion is correct", {
 #context("Ploidy estimation is correct")
 
 #test_that("Ploidy estimation is correct", {
-#  filename <- system.file("extdata", "example1.vcf", package = "VCF2Ploidy", mustWork=TRUE)
-#  df <- VCF2Ploidy(filename=filename,
+#  filename <- system.file("extdata", "example1.vcf", package = "vcf2ploidy", mustWork=TRUE)
+#  df <- vcf2ploidy(filename=filename,
 #                   remove_double_hets=TRUE, props=c(0.25, 0.5, 0.75))
 
 #  expect_that(df, is_a("list"))

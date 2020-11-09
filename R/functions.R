@@ -1,8 +1,8 @@
 #' @title Count number of metadata lines in VCF files
 #'
-#' @description Read in a Variant Calling Format file and count the number of metadata lines to skip over for read_VCF function. Not exported.
+#' @description Read in a Variant Calling Format file and count the number of metadata lines to skip over for read_vcf function. Not exported.
 #'
-#' @details Throws an error if file cannot be found. Metadata lines are identified by checking if the lines starts with "##". This function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time in the read_VCF, VCF2HAD, VCF2Ploidy, and VCF2Colony functions by entering the number of metadata lines in their "skip_lines" argument.
+#' @details Throws an error if file cannot be found. Metadata lines are identified by checking if the lines starts with "##". This function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time in the read_vcf, vcf2had, vcf2ploidy, and vcf2colony functions by entering the number of metadata lines in their "skip_lines" argument.
 #'
 #' @param filename A character string of the data file path.
 #'
@@ -15,7 +15,7 @@ count_metadata_lines <- function(filename){
     stop("file '", filename, "' does not exist")
 
   # Read in VCF File line by line
-  VCF_file <- readLines(filename)
+  vcf_file <- readLines(filename)
 
   # Initialize parameters to loop through lines of VCF file, keep counting until there are no more metadata lines
   line <- 1
@@ -25,7 +25,7 @@ count_metadata_lines <- function(filename){
   # Loop through lines of VCF file,
   while(is_metadata_line == TRUE){
     # Count metadata lines
-    if(startsWith(VCF_file[line], "##")){
+    if(startsWith(vcf_file[line], "##")){
       line <- line + 1
       num_metadata_lines <- num_metadata_lines + 1
     }
@@ -48,7 +48,7 @@ count_metadata_lines <- function(filename){
 #' @return This function returns a data frame table of the VCF data with the metadata and the first 9 columns removed.
 #'
 #' @examples
-#' \dontrun{read_VCF("./inst/extdata/example.vcf")}
+#' \dontrun{read_vcf("./inst/extdata/example.vcf")}
 #'
 #' @importFrom readr cols
 #' @importFrom readr read_delim
@@ -58,7 +58,7 @@ count_metadata_lines <- function(filename){
 #' @importFrom magrittr "%>%"
 #'
 #' @export
-read_VCF <- function(filename, skip_lines=NULL){
+read_vcf <- function(filename, skip_lines=NULL){
   if(!file.exists(filename))
     stop("file '", filename, "' does not exist")
 
@@ -68,16 +68,16 @@ read_VCF <- function(filename, skip_lines=NULL){
   }
 
   # Read in VCF file
-  VCF_file <- read_delim(file=filename, delim="\t", col_types = cols(.default = "c"), skip=skip_lines)
+  vcf_file <- read_delim(file=filename, delim="\t", col_types = cols(.default = "c"), skip=skip_lines)
 
   # Remove first 9 columns
-  VCF_file <-
-    VCF_file %>%
+  vcf_file <-
+    vcf_file %>%
     # Removing the pound symbol on the "#CHROM" column so the select() arguments don't get commented out
     rename("CHROM" = "#CHROM") %>%
     dplyr::select(-CHROM, -POS, -ID, -REF, -ALT, -QUAL, -FILTER, -INFO, -FORMAT)
 
-  return(VCF_file)
+  return(vcf_file)
 }
 
 
@@ -132,7 +132,7 @@ analyze_locus <- function(locus, remove_double_hets=FALSE){
 }
 
 
-#' @title Extract Locus Information from VCF Data for Colony Format
+#' @title Extract Locus Information from VCF Data for COLONY Format
 #'
 #' @description A function used to fill the Colony converted data frame. Not exported.
 #'
@@ -159,32 +159,32 @@ analyze_locus_colony <- function(locus){
 
 #' @title Convert Raw VCF Data to HAD Format
 #'
-#' @description Convert tbl_df output from read_VCF() to a Heterozygous Allele Depth (HAD) format, to be read in by GBS2Ploidy.
+#' @description Convert tbl_df output from read_vcf() to a Heterozygous Allele Depth (HAD) format, to be read in by gbs2ploidy.
 #'
 #' @param filename A character string of the data file path.
 #' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
-#' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with GBS2Ploidy falsely labeling triploids.
+#' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with gbs2ploidy falsely labeling triploids.
 #'
 #' @return A data frame in Heterozygous Allele Depth (HAD) format
 #'
 #' @examples
-#' \dontrun{VCF2HAD("./inst/extdata/example.vcf")}
-#' \dontrun{VCF2HAD("./inst/extdata/example.vcf", remove_dobule_hets=TRUE)}
+#' \dontrun{vcf2had("./inst/extdata/example.vcf")}
+#' \dontrun{vcf2had("./inst/extdata/example.vcf", remove_dobule_hets=TRUE)}
 #'
 #' @export
-VCF2HAD <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
+vcf2had <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
   # Read in VCF file
-  VCF_df <- read_VCF(filename, skip_lines)
+  vcf_df <- read_vcf(filename, skip_lines)
   # Initialize an empty data frame
-  HAD_df <- data.frame()
+  had_df <- data.frame()
   # Get the number of rows and columns
-  num_rows    <- dim(VCF_df)[1]
-  num_columns <- dim(VCF_df)[2]
+  num_rows    <- dim(vcf_df)[1]
+  num_columns <- dim(vcf_df)[2]
 
   for(i in 1:num_columns){
     # Grab column from VCF data frame
-    col <- VCF_df[[i]]
-    col_name <- colnames(VCF_df)[i]
+    col <- vcf_df[[i]]
+    col_name <- colnames(vcf_df)[i]
 
     # Initialize an empty data frame
     new_col <- data.frame()
@@ -202,18 +202,18 @@ VCF2HAD <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
     # Get correct column names for new columns
     colnames(new_col) <- c(col_name, col_name)
     # Add new columns to final data frame
-    if(dim(HAD_df)[1] == 0 & dim(HAD_df)[2] == 0){HAD_df = new_col}
-    else{HAD_df <- cbind(HAD_df, new_col)}
+    if(dim(had_df)[1] == 0 & dim(had_df)[2] == 0){had_df = new_col}
+    else{had_df <- cbind(had_df, new_col)}
   }
 
-  return(HAD_df)
+  return(had_df)
 }
 
 
 
-#' @title Convert Raw VCF Data to Colony Format
+#' @title Convert Raw VCF Data to COLONY Format
 #'
-#' @description Convert tbl_df output from read_VCF() to a format that can be read in by Colony.
+#' @description Convert tbl_df output from read_vcf() to a format that can be read in by COLONY software.
 #'
 #' @param filename A character string of the data file path.
 #' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
@@ -222,23 +222,23 @@ VCF2HAD <- function(filename, skip_lines=NULL, remove_double_hets=FALSE){
 #' @return NULL
 #'
 #' @examples
-#' \dontrun{VCF2colony(filename = "./inst/extdata/example.vcf", out_filename = "./example.txt")}
+#' \dontrun{vcf2colony(filename = "./inst/extdata/example.vcf", out_filename = "./example.txt")}
 #'
 #' @export
-VCF2colony <- function(filename, skip_lines=NULL, out_filename){
+vcf2colony <- function(filename, skip_lines=NULL, out_filename){
   # Read in VCF file
-  VCF_df <- read_VCF(filename, skip_lines)
+  vcf_df <- read_vcf(filename, skip_lines)
   # Initialize an empty data frame
   colony_df <- data.frame()
 
   # Get the number of rows and columns
-  num_rows    <- dim(VCF_df)[1]
-  num_columns <- dim(VCF_df)[2]
+  num_rows    <- dim(vcf_df)[1]
+  num_columns <- dim(vcf_df)[2]
 
   for(i in 1:num_columns){
     # Grab column from VCF data frame
-    col <- VCF_df[[i]]
-    col_name <- colnames(VCF_df)[i]
+    col <- vcf_df[[i]]
+    col_name <- colnames(vcf_df)[i]
 
     # Initialize an empty data frame
     new_col <- data.frame()
@@ -280,7 +280,7 @@ VCF2colony <- function(filename, skip_lines=NULL, out_filename){
 #'
 #' @param filename A character string of the data file path.
 #' @param skip_lines A numeric of the number of metadata lines to skip over in the VCF file. If left null, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save some run time by entering the number of metadata lines in this argument.
-#' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with GBS2Ploidy falsely labeling triploids.
+#' @param remove_double_hets Logical for determining if double heterozygous loci should be treated as missing information. Should fix issues with gbs2ploidy falsely labeling triploids.
 #' @param props a vector containing valid allelic proportions given the expected cyotypes present in the sample.
 #' @param mcmc.nchain number of chains for MCMC.
 #' @param mcmc.steps number of post burnin iterations for each chain.
@@ -292,26 +292,26 @@ VCF2colony <- function(filename, skip_lines=NULL, out_filename){
 #' @param nclasses the number of cyotypes expected.
 #' @param pcs a vector giving the PC to use for DA.
 #'
-#' @return VCF2Ploidy returns a list with three components:
+#' @return vcf2ploidy returns a list with three components:
 #' @return pp A matrix with assignment probabilities for each individual (rows) to each group (columns); the first column gives the ids provided by the user. Only individuals that were not part of the training set are included.
 #' @return pcwghts A matrix with the variable loadings (PC weights) from the ordination of residual heterozygosity and allelic proportions. Columns correspond with PCs in ascending order (i.e., the PC with the largest eigenvalue is first).
 #' @return pcscrs A matrix of PC scores from the ordination of residual heterozygosity and allelic proportions. Columns correspond with PCs in ascending order (i.e., the PC with the largest eigenvalue is first).
 #'
 #' @examples
-#' \dontrun{VCF2Ploidy("./example.vcf")}
-#' \dontrun{VCF2Ploidy("./example.vcf", props=c(0.25, 0.5, 0.75))}
+#' \dontrun{vcf2ploidy("./example.vcf")}
+#' \dontrun{vcf2ploidy("./example.vcf", props=c(0.25, 0.5, 0.75))}
 #'
 #' @importFrom gbs2ploidy estprops
 #' @importFrom gbs2ploidy estploidy
 #'
 #' @export
-VCF2Ploidy <- function(filename, skip_lines=NULL, remove_double_hets=FALSE,
+vcf2ploidy <- function(filename, skip_lines=NULL, remove_double_hets=FALSE,
                        props=c(0.25, 0.33, 0.5, 0.66, 0.75), mcmc.nchain=2,
                        mcmc.steps=10000, mcmc.burnin=1000, mcmc.thin=2,
                        train=FALSE, pl=NA, set=NA, nclasses=2, pcs=1:2){
 
   # Open file and convert to HAD format
-  had_df <- VCF2HAD(filename, remove_double_hets=FALSE)
+  had_df <- vcf2had(filename, remove_double_hets=FALSE)
 
   # Separate the first and second alleles in the HAD data frame
   num_cols <- dim(had_df)[2]
@@ -321,6 +321,7 @@ VCF2Ploidy <- function(filename, skip_lines=NULL, remove_double_hets=FALSE,
 
   cov1 <- as.matrix(had_df[cov1_cols])
   cov2 <- as.matrix(had_df[cov2_cols])
+
 
   # Grab column names for "ids" argument in estploidy()
   ids_indeces <- seq(1, num_cols, 2)
