@@ -1,4 +1,4 @@
-# vcf2ploidy
+# vcf2ploidy 2.0
 
 ## Introduction
 
