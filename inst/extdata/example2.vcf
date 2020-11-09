@@ -1,0 +1,21 @@
+##fileformat=VCFv4.0
+##fileDate=2017/09/22
+##source=ipyrad_v.0.7.13
+##reference=pseudo-reference (most common base at site)
+##phasing=unphased
+##INFO=<ID=NS,Number=1,Type=Integer,Description="Number of Samples With Data">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=CATG,Number=1,Type=String,Description="Base Counts (CATG)">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	10A	10B	10C	10D
+locus_4421	1	.	A	T	13	PASS	NS=94;DP=2937	GT:DP:CATG	0/0:101:1,99,0,1	1/1:1:0,0,1,0	0/0:147:0,146,1,0	0/0:94:0,93,1,0
+locus_4421	12	.	G	C	13	PASS	NS=94;DP=3064	GT:DP:CATG	0/0:102:0,0,0,102	0/0:114:0,0,0,114	0/0:149:0,0,0,149	0/0:94:0,0,0,94
+locus_4421	29	.	G	A	13	PASS	NS=94;DP=3064	GT:DP:CATG	0/0:102:0,0,0,102	0/0:114:0,0,0,114	0/0:149:0,0,0,149	0/0:94:0,0,0,94
+locus_5530	40	.	C	T	13	PASS	NS=65;DP=2386	GT:DP:CATG	./.:0:0,0,0,0	0/0:68:68,0,0,0	0/0:60:60,0,0,0	0/0:53:53,0,0,0
+locus_5530	44	.	C	T	13	PASS	NS=65;DP=2386	GT:DP:CATG	./.:0:0,0,0,0	0/0:68:68,0,0,0	0/0:60:60,0,0,0	0/0:53:53,0,0,0
+locus_5530	96	.	T	A	13	PASS	NS=8;DP=10	GT:DP:CATG	./.:0:0,0,0,0	./.:0:0,0,0,0	./.:0:0,0,0,0	./.:0:0,0,0,0
+locus_8039	39	.	C	T	13	PASS	NS=60;DP=1775	GT:DP:CATG	./.:0:0,0,0,0	0/0:27:27,0,0,0	0/0:24:0,0,0,24	0/0:14:14,0,0,0
+locus_9376	24	.	T	C	13	PASS	NS=90;DP=2261	GT:DP:CATG	0/0:44:0,0,44,0	0/0:36:0,0,36,0	0/0:29:0,0,29,0	0/0:37:0,0,37,0
+locus_9376	26	.	T	G	13	PASS	NS=90;DP=2261	GT:DP:CATG	0/0:44:0,0,44,0	0/0:36:0,0,36,0	0/0:29:0,0,29,0	0/0:37:0,0,37,0
+locus_9376	80	.	G	A	13	PASS	NS=90;DP=2261	GT:DP:CATG	0/1:44:0,7,0,37	0/0:36:0,0,0,36	0/0:29:0,0,0,29	0/0:37:0,0,0,37
