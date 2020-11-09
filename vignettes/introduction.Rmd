@@ -15,43 +15,42 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(VCF2Ploidy)
+library(vcf2ploidy)
 library(readr)
 ```
 
 # Introduction
-VCF2Ploidy is a companion package to the [gbs2ploidy package](https://cran.r-project.org/package=gbs2ploidy). It was made to add a file converter function, as GBS2Ploidy requires the GBS data to be in Heterozygous Allele Depth (HAD) format to run the estprops() and estploidy() functions. There is also a function for converting VCF files to Colony format.
+vcf2ploidy is a companion package to the [gbs2ploidy package](https://cran.r-project.org/package=gbs2ploidy). It was made to add a file converter function, as GBS2Ploidy requires the GBS data to be in Heterozygous Allele Depth (HAD) format to run the estprops() and estploidy() functions. There is also a function for converting VCF files to Colony format.
 
-# VCF2HAD()
-To read in and convert VCF files into HAD format, use the VCF2HAD() function. This function has 3 arguments:
+# vcf2had()
+To read in and convert VCF files into HAD format, use the vcf2had() function. This function has 3 arguments:
 1. **filename** - A character string of the path of the VCF file you want to read in.
 2. **skip_lines** - A numeric of the number of lines to skip at the beginning of the file. This is used to skip over the metadata lines in the VCF file. If left at the default value of NULL, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save yourself some run time by entering the number of metadata lines in this argument. Metadata lines usually start with "##"
 3. **remove_double_hets** - A logical for determining whether to treat double heterozygous loci as missing loci. If this is set to true and there are loci that have reads on more than 2 alleles, the resulting HAD data frame will show NA for each allele at that locus. If set to false, the 2 alleles with the largest number of reads will be included in the resulting HAD data frame. Setting this argument to true will likely solve any issues of the GBS2Ploidy functions assigning ploidies to individuals that are not observed in nature. For example, if your polyploidic individuals  can only be diploid or tetraploid, and the estploidy() function in GBS2Ploidy estimates an individual to be a triploid, it's possible that said individual had some loci in the VCF file that were double heterozygous and had 2:1:1 allelic ratios instead of the 3:1 ratios. The conversion to HAD format would show those loci as 2:1 allelic ratios, since HAD format only allows for reads on 2 alleles, resulting in a triploid assignment to that individual.
 
 ## Example
-```{r VCF2HAD_Example}
-df <- VCF2HAD("../inst/extdata/example1.vcf", remove_double_hets=TRUE)
+```{r vcf2had_Example}
+df <- vcf2had("../inst/extdata/example1.vcf", remove_double_hets=TRUE)
 df
 ```
 
-# VCF2Ploidy()
-To read in a VCF file, run the conversion to HAD format, and estimate ploidy all in one function, use the VCF2Ploidy() function. This function runs VCF2HAD() on the input VCF file, passes the resulting HAD data frame into the GBS2Ploidy functions estprops() and estploidy() and returns the output of estploidy(). 
+# vcf2ploidy()
+To read in a VCF file, run the conversion to HAD format, and estimate ploidy all in one function, use the vcf2ploidy() function. This function runs vcf2had() on the input VCF file, passes the resulting HAD data frame into the GBS2Ploidy functions estprops() and estploidy() and returns the output of estploidy(). 
 
-VCF2Ploidy() has all the same arguments as VCF2HAD(), estprops(), and estploidy(), minus cov1, cov2, alphas, het, depth, and ids. VCF2Ploidy() will take care of separating the HAD data frame into 2 separate matrices for each allele, calculating observed heterozygosity and depth of coverage from the allele count, and grabbing the individuals' ids.
+vcf2ploidy() has all the same arguments as vcf2had(), estprops(), and estploidy(), minus cov1, cov2, alphas, het, depth, and ids. vcf2ploidy() will take care of separating the HAD data frame into 2 separate matrices for each allele, calculating observed heterozygosity and depth of coverage from the allele count, and grabbing the individuals' ids.
 
-```{r VCF2Ploidy_example}
-df <- VCF2Ploidy("../inst/extdata/example1.vcf", remove_double_hets=TRUE, props=c(0.25, 0.5, 0.75))
+```{r vcf2ploidy_example, eval=FALSE}
+df <- vcf2ploidy("../inst/extdata/example1.vcf", remove_double_hets=TRUE, props=c(0.25, 0.5, 0.75))
 df
 ```
 
-# VCF2Ploidy_APP()
+# vcf2ploidy_app()
 
-**THIS FUNCTION IS NOT FINISHED YET**
-This function launches a shiny application for the user to run VCF2Ploidy() via a GUI. The user can simply launch the application, drag and drop their VCF file in, select parameters to run the functions with, and hit submit. The user will have the option to save the results to a file or the global environment.
+This function launches a shiny gadget for the user to run vcf2had(), vcf2ploidy(), or vcf2colony() via a GUI in RStudio's "viewer" pane. The user can simply launch the application, drag and drop their VCF file in, select parameters to run the functions with, and execute. The user will have the option to save the results to a file or as an object in the global environment.
 
-# VCF2colony()
+# vcf2colony()
 
-To read in and convert VCF files into Colony format, use the VCF2colony() function. This function has 3 arguments:
+To read in and convert VCF files into Colony format, use the vcf2colony() function. This function has 3 arguments:
 1. **filename** - A character string of the path of the VCF file you want to read in.
 2. **skip_lines** - A numeric of the number of lines to skip at the beginning of the file. This is used to skip over the metadata lines in the VCF file. If left at the default value of NULL, metadata lines are skipped over automatically by the count_metadata_lines function. The count_metadata_lines function requires reading in the entire file, so if you have a large file and know the number of metadata lines in that file, you can save yourself some run time by entering the number of metadata lines in this argument. Metadata lines usually start with "##"
 3. **out_filename** - A character string of the path where you want the converted file to be saved.
