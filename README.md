@@ -17,8 +17,8 @@ This package also contains a function for converting VCF files to Colony format.
 
 
 ## Installation
- 
-To install, make sure you have the [devtools package](https://cran.r-project.org/package=devtools) installed and loaded. Then run the following commands:
+
+gbs2ploidy depends on [JAGS](https://sourceforge.net/projects/mcmc-jags/files/) - make sure you have that installed first. Then install the [devtools package](https://cran.r-project.org/package=devtools), and run the following commands:
 
 ```{r installation, eval=FALSE}
 library(devtools)
@@ -43,4 +43,5 @@ DeWaters, D. 2020. vcf2ploidy. Waldorf (MD): GitHub; [accessed Year Month Day]. 
 ## References
 
 Gompert  Z.  and  Mock  K.  (XXXX)  Detection  of  individual  ploidy  levels  with  genotyping-by-sequencing (GBS) analysis. Molecular Ecology Resources, submitted.
+
 Jones OR, Wang J. COLONY: a program for parentage and sibship inference from multilocus genotype data. Mol Ecol Resour. 2010 May;10(3):551-5. doi: 10.1111/j.1755-0998.2009.02787.x. Epub 2009 Oct 21. PMID: 21565056.
